@@ -41,7 +41,7 @@ export default {
   }),
   methods: {
     searchStoreForPerson(searchDetails) {
-      // todo: graphql?
+      // todo: graphql?, move method
       this.searchDetails = searchDetails;
       let partyDetails = this.partyDetails;
 
@@ -64,6 +64,11 @@ export default {
         variant: variant,
         solid: true
       })
+    }
+  },
+  computed: {
+    sanitizedFullName() {
+      return this.searchDetails.firstName.trim() + " " + this.searchDetails.firstName.trim();
     }
   }
 }
