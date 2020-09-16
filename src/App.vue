@@ -45,11 +45,9 @@ export default {
       this.searchDetails = searchDetails;
       let partyDetails = this.partyDetails;
 
-      if (partyDetails && !partyDetails.isAttending) {
+      if (partyDetails && !partyDetails.isAttending && this.partyDetails.name.includes(this.sanitizedFullName)) {
         this.personNotFound = false;
         this.partyDetails = partyDetails;
-      } else if (partyDetails && partyDetails.isAttending) {
-        this.$bvModal.show('modal-attending');
       } else {
         this.makeToast(
             'danger',
