@@ -1,0 +1,181 @@
+<template>
+  <b-jumbotron>
+    <template v-slot:header>{{ welcomeMessage }}</template>
+
+    <template v-if="partyDetails.hasPlusOne" v-slot:lead>
+      You are allowed to bring a guest, let us know who you are bringing.
+      <b-button v-b-modal.add-modal>Add my plus one.</b-button>
+    </template>
+
+    <hr class="my-4">
+
+    <b-form @submit.prevent="submitForm">
+      <b-card-group deck>
+        <b-card
+            v-for="(member, index) in partyDetails.groupList" :key="index"
+            class="mb-2"
+            :title="member"
+        >
+          <b-card-body>
+            <b-form-group
+                :id="'member-detail-' + index"
+                label="Dietary Restrictions"
+                label-for="textarea"
+                class="navy-text"
+            >
+              <b-form-textarea
+                  :id="'textarea-member-' + index"
+                  placeholder="Enter Dietary Restrictions"
+                  rows="5"
+                  no-resize
+              ></b-form-textarea>
+            </b-form-group>
+
+            <div class="buttons">
+              <b-button @click.prevent="acceptDecline(member,'accept')" variant="outline-secondary"
+                        class="custom-button">Joyfully Accept!
+              </b-button>
+              <b-button @click.prevent="acceptDecline(member,'decline')" variant="outline-secondary"
+                        class="custom-button">Regretfully Decline.
+              </b-button>
+            </div>
+          </b-card-body>
+
+          <b-card-footer v-if="findInTable(member)">
+            {{ findInTable(member) }}
+          </b-card-footer>
+        </b-card>
+      </b-card-group>
+
+      <b-form-group
+          id="input-group-3"
+          label="Email address:"
+          label-for="input-3"
+      >
+        <b-form-input
+            id="input-3"
+            v-model="submitDetails.emailAddress"
+            type="email"
+            required
+            placeholder="Email address"
+        ></b-form-input>
+      </b-form-group>
+
+      <hr class="my-4">
+
+      <b-button type="submit" class="margin-bottom-15">Submit.</b-button>
+    </b-form>
+
+    <cant-find-person-modal></cant-find-person-modal>
+    <add-plus-one-modal></add-plus-one-modal>
+  </b-jumbotron>
+</template>
+
+<script>
+import CantFindPersonModal from "@/modals/CantFindPersonModal";
+import AddPlusOneModal from "@/modals/AddPlusOneModal";
+
+export default {
+  name: "PersonCanRsvp",
+  components: { AddPlusOneModal, CantFindPersonModal},
+  data: () => ({
+    submitDetails: {
+      emailAddress: "",
+    },
+    tableDetails: {
+      tableItems: []
+    }
+  }),
+  props: {
+    partyDetails: {
+      name: "",
+      id: 0,
+      isAttending: false,
+      hasPlusOne: false,
+      groupList: []
+    },
+    searchDetails: {
+      firstName: "",
+      lastName: "",
+    }
+  },
+  computed: {
+    welcomeMessage() {
+      if (this.partyDetails) {
+        return `${this.searchDetails.lastName}, party of ${this.partyDetails.groupList.length}`;
+      } else {
+        return null;
+      }
+    }
+  },
+  methods: {
+    findInTable(person) {
+      let details = this.tableDetails.tableItems.find(item => item.person === person);
+
+      if (details !== undefined) {
+        return details.status;
+      } else {
+        return null;
+      }
+    },
+    acceptDecline(person, status) {
+      let hasAccepted = this.tableDetails.tableItems.find(item => item.person === person);
+
+      if (status === "accept") {
+        if (hasAccepted === undefined) {
+          this.tableDetails.tableItems.push({person: person, status: "Accepted Invitation"})
+        } else {
+          hasAccepted.status = "Accepted Invitation";
+        }
+      } else {
+        if (hasAccepted === undefined) {
+          this.tableDetails.tableItems.push({person: person, status: "Declined Invitation"})
+        } else {
+          hasAccepted.status = "Declined Invitation";
+        }
+      }
+    },
+    submitForm() {
+      let groupDetails = this.partyDetails.groupList;
+
+      let submitObject = {
+        personDetails: [],
+        emailAddress: this.submitDetails.emailAddress
+      }
+
+      let canSubmit = false;
+      for (let i = 0; i < groupDetails.length; i++) {
+        let name = groupDetails[i];
+        let val = document.getElementById("textarea-member-" + i).value;
+        let status = this.findInTable(name);
+
+        if (status) {
+          submitObject.personDetails.push({
+            name: name,
+            dietaryRestrictions: val != null ? val : "None",
+            status: status
+          })
+
+          canSubmit = true;
+        } else {
+          this.makeToast(
+              'danger',
+              "All party members must accept or decline the invitation.",
+              "More Information Required."
+          );
+
+          canSubmit = false;
+        }
+      }
+
+      if (canSubmit) {
+        console.log(JSON.stringify(submitObject));
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
