@@ -63,7 +63,7 @@
 
       <hr class="my-4">
 
-      <b-button type="submit" class="margin-bottom-15">Submit.</b-button>
+      <b-button type="submit" class="margin-bottom-15" disabled="disableSubmit">Submit.</b-button>
     </b-form>
 
     <cant-find-person-modal></cant-find-person-modal>
@@ -74,17 +74,21 @@
 <script>
 import CantFindPersonModal from "@/modals/CantFindPersonModal";
 import AddPlusOneModal from "@/modals/AddPlusOneModal";
+import {API, graphqlOperation} from 'aws-amplify';
+import {updateAttending} from "@/graphql/mutations";
+import {getAttending} from "@/graphql/queries";
 
 export default {
   name: "PersonCanRsvp",
-  components: { AddPlusOneModal, CantFindPersonModal},
+  components: {AddPlusOneModal, CantFindPersonModal},
   data: () => ({
     submitDetails: {
       emailAddress: "",
     },
     tableDetails: {
       tableItems: []
-    }
+    },
+    disableSubmit: false
   }),
   props: {
     partyDetails: {
@@ -97,14 +101,14 @@ export default {
     searchDetails: {
       firstName: "",
       lastName: "",
-    }
+    },
   },
   computed: {
     welcomeMessage() {
       if (this.partyDetails) {
         return `${this.searchDetails.lastName}, party of ${this.partyDetails.groupList.length}`;
       } else {
-        return null;
+        return "Welcome!";
       }
     }
   },
@@ -135,7 +139,7 @@ export default {
         }
       }
     },
-    submitForm() {
+    async submitForm() {
       let groupDetails = this.partyDetails.groupList;
 
       let submitObject = {
@@ -152,7 +156,7 @@ export default {
         if (status) {
           submitObject.personDetails.push({
             name: name,
-            dietaryRestrictions: val != null ? val : "None",
+            dietaryRestrictions: val ? val : "None",
             status: status
           })
 
@@ -169,6 +173,16 @@ export default {
       }
 
       if (canSubmit) {
+        let personExists = await API.graphql(graphqlOperation(
+            getAttending, {input: {id: this.partyDetails.id}}))
+
+        if (personExists) {
+          await API.graphql(graphqlOperation(
+              updateAttending, {input: {id: this.partyDetails.id, isAttending: true, submitObject: submitObject}}))
+        }
+
+        this.$emit("submit-success");
+        this.disableSubmit = true;
         console.log(JSON.stringify(submitObject));
       }
     }

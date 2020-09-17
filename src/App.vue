@@ -2,27 +2,34 @@
   <div>
     <find-by-person
         v-if="personNotFound"
-        @search-store="searchStoreForPerson"
+        @invitee-found="searchStoreForPerson"
     >
     </find-by-person>
     <person-can-rsvp
         v-else
         :search-details="searchDetails"
         :party-details="partyDetails"
+        @submit-success="submitSuccess"
     >
     </person-can-rsvp>
-
-    <already-attending-modal></already-attending-modal>
+    <router-view></router-view>
+    <success-submit-modal :group-list="partyDetails.groupList"></success-submit-modal>
   </div>
 </template>
 
 <script type="text/javascript">
 import FindByPerson from "@/views/FindByPerson";
 import PersonCanRsvp from "@/views/PersonCanRsvp";
-import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
+
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
+import SuccessSubmitModal from "@/modals/SuccessSubmitModal";
+
+Amplify.configure(awsconfig);
+
 export default {
   name: 'App',
-  components: { AlreadyAttendingModal, PersonCanRsvp, FindByPerson },
+  components: {SuccessSubmitModal, PersonCanRsvp, FindByPerson},
   data: () => ({
     personNotFound: {
       value: true
@@ -40,21 +47,11 @@ export default {
     }
   }),
   methods: {
-    searchStoreForPerson(searchDetails) {
-      // todo: graphql?, move method
-      this.searchDetails = searchDetails;
-      let partyDetails = this.partyDetails;
+    searchStoreForPerson(object) {
+      this.searchDetails = object.searchDetails;
+      this.partyDetails = object.partyDetails;
 
-      if (partyDetails && !partyDetails.isAttending && this.partyDetails.name.includes(this.sanitizedFullName)) {
-        this.personNotFound = false;
-        this.partyDetails = partyDetails;
-      } else {
-        this.makeToast(
-            'danger',
-            "Sorry, but we couldn't find you on our reservation list. Check the spelling of your name, or try a different variation.",
-            `Unable to find ${this.sanitizedFullName}`
-        );
-      }
+      this.personNotFound = false;
     },
     makeToast(variant = null, message, title) {
       this.$bvToast.toast(message, {
@@ -62,6 +59,9 @@ export default {
         variant: variant,
         solid: true
       })
+    },
+    submitSuccess() {
+      this.$bvModal.show('modal-attending');
     }
   },
   computed: {

@@ -35,27 +35,75 @@
         </b-form-input>
       </b-form-group>
 
-      <b-button type="submit" pill class="margin-bottom-15">Find Me!</b-button>
+      <b-button type="submit" pill class="margin-bottom-15" disabled="buttonDisabled">Find Me!</b-button>
     </b-form>
 
     <cant-find-person-modal></cant-find-person-modal>
+    <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
   </b-jumbotron>
 </template>
 
 <script>
 import CantFindPersonModal from "@/modals/CantFindPersonModal";
+import {API, graphqlOperation} from 'aws-amplify';
+import {getAttending} from "@/graphql/queries";
+import {createAttending, updateAttending} from "@/graphql/mutations";
+import constObj from "@/constants/const";
+import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
+
 export default {
   name: "FindByPerson",
-  components: { CantFindPersonModal },
+  components: {AlreadyAttendingModal, CantFindPersonModal},
   data: () => ({
     searchDetails: {
       firstName: "",
       lastName: ""
-    }
+    },
+    buttonDisabled: false,
+    overrideReservation: false
   }),
   methods: {
-    searchStoreForPerson()  {
-      this.$emit("search-store", this.searchDetails);
+    async searchStoreForPerson() {
+      let person = this.searchDetails.firstName.trim() + " " + this.searchDetails.lastName.trim();
+      let invitee = constObj.invitee.find(item => item.name.includes(person))
+      let dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: name.id }}));
+
+      console.log(invitee);
+
+      if (dbInvitee && dbInvitee.isAttending) {
+        this.$bvModal.show('modal-attending');
+        this.buttonDisabled = true;
+      } else if (!invitee) {
+        this.makeToast(
+            'danger',
+            "Sorry, but we couldn't find you on our reservation list. Check the spelling of your name, or try a different variation.",
+            `Unable to find ${this.sanitizedFullName}`
+        );
+      } else if (this.overrideReservation && dbInvitee) {
+        await API.graphql(graphqlOperation(updateAttending, {
+          input: {
+            id: invitee.id,
+            isAttending: false,
+            submitObject: null
+          }
+        }));
+
+        this.$emit("invitee-found", {
+          partyDetails: invitee,
+          searchDetails: this.searchDetails
+        });
+      } else {
+        await API.graphql(graphqlOperation(
+            createAttending, {input: {id: invitee.id, isAttending: false, submitObject: null}}));
+        this.$emit("invitee-found", {
+          partyDetails: invitee,
+          searchDetails: this.searchDetails
+        });
+      }
+    },
+    changeReservation() {
+      this.overrideReservation = true;
+      this.buttonDisabled = false;
     }
   }
 }
