@@ -88,7 +88,7 @@ export default {
     tableDetails: {
       tableItems: []
     },
-    disableSubmit: false
+    disableSubmit: true
   }),
   props: {
     partyDetails: {
@@ -182,7 +182,7 @@ export default {
         }
 
         this.$emit("submit-success");
-        this.disableSubmit = true;
+        this.disableSubmit = false;
         console.log(JSON.stringify(submitObject));
       }
     }

@@ -26,16 +26,17 @@ export default {
   computed: {
     tableItems() {
       let tableItems = [];
-      this.attendingResult.forEach(attendee => {
-        attendee.personDetails.forEach(person => {
-          tableItems.push({
-            name: person.name,
-            dietary_restrictions: person.dietaryRestrictions,
-            invitation_status: person.status
+      if (this.attendingResult) {
+        this.attendingResult.forEach(attendee => {
+          attendee.personDetails.forEach(person => {
+            tableItems.push({
+              name: person.name,
+              dietary_restrictions: person.dietaryRestrictions,
+              invitation_status: person.status
+            });
           });
         });
-      });
-
+      }
       return tableItems;
     }
   }

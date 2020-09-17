@@ -59,7 +59,7 @@ export default {
       firstName: "",
       lastName: ""
     },
-    buttonDisabled: false,
+    buttonDisabled: true,
     overrideReservation: false
   }),
   methods: {
@@ -72,7 +72,7 @@ export default {
 
       if (dbInvitee && dbInvitee.isAttending) {
         this.$bvModal.show('modal-attending');
-        this.buttonDisabled = true;
+        this.buttonDisabled = false;
       } else if (!invitee) {
         this.makeToast(
             'danger',
@@ -103,7 +103,7 @@ export default {
     },
     changeReservation() {
       this.overrideReservation = true;
-      this.buttonDisabled = false;
+      this.buttonDisabled = true;
     }
   }
 }
