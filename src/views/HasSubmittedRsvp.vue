@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { API, graphqlOperation } from 'aws-amplify';
-import { listAttendings} from "@/graphql/queries";
+import {API, graphqlOperation} from 'aws-amplify';
+import {listAttendings} from "@/graphql/queries";
 import Amplify from 'aws-amplify';
 
 import awsmobile from "@/aws-exports";
@@ -21,9 +21,10 @@ Amplify.configure(awsmobile);
 export default {
   name: "HasSubmittedRsvp",
   async mounted() {
-    let result = await API.graphql(graphqlOperation(listAttendings))
-    result.filter(person => person.isAttending);
-    this.attendingResult = result;
+    await API.graphql(graphqlOperation(listAttendings))
+        .then(resp => {
+          this.attendingResult = resp.filter(person => person.isAttending);
+        }).catch(e => console.log(e));
   },
   data: () => ({
     attendingResult: null

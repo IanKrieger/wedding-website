@@ -178,24 +178,33 @@ export default {
       }
 
       if (canSubmit) {
-        let personExists = await API.graphql(graphqlOperation(
-            getAttending, {input: {id: `${this.partyDetails.id}` }}))
-
-        if (personExists && !personExists.isAttending) {
-          await API.graphql(graphqlOperation(
-              updateAttending, {input: {id: `${this.partyDetails.id}`, isAttending: true, submitObject: submitObject}}));
-          this.$emit("submit-success");
-        } else {
-          this.$bvModal.show("modal-attending");
-        }
+        await API.graphql(graphqlOperation(
+            getAttending, {input: {id: `${this.partyDetails.id}` }}
+        )).then(async resp => {
+          if (resp && !resp.isAttending) {
+            await API.graphql(graphqlOperation(
+                updateAttending,
+                {input: {id: `${this.partyDetails.id}`, isAttending: true, submitObject: submitObject}})
+            ).then(resp => {
+              console.log(resp);
+              this.$emit("submit-success");
+            }).catch(e => console.log(e));
+          } else {
+            this.$bvModal.show("modal-attending");
+          }
+        }).catch(e => console.log(e));
 
         console.log(JSON.stringify(submitObject));
       }
     },
     async changeReservation() {
       await API.graphql(graphqlOperation(
-          updateAttending, {input: {id: `${this.partyDetails.id}`, isAttending: false, submitObject: null}}))
-      this.$emit("change-again")
+          updateAttending,
+          {input: {id: `${this.partyDetails.id}`, isAttending: false, submitObject: null}})
+      ).then(resp  => {
+        console.log(resp);
+        this.$emit("change-again");
+      }).catch(e => console.log(e));
     }
   }
 }

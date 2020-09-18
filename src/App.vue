@@ -3,6 +3,7 @@
     <find-by-person
         v-if="personNotFound"
         @invitee-found="searchStoreForPerson"
+        @cant-find-toast="cantFindToast"
     >
     </find-by-person>
     <person-can-rsvp
@@ -63,6 +64,13 @@ export default {
     },
     submitSuccess() {
       this.$bvModal.show('modal-attending');
+    },
+    cantFindToast(person) {
+      this.makeToast(
+          'danger',
+          "Sorry, but we couldn't find you on our reservation list. Check the spelling of your name, or try a different variation.",
+          `Unable to find ${person}`
+      );
     }
   },
   computed: {

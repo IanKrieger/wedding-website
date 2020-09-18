@@ -69,21 +69,21 @@ export default {
   methods: {
     async searchStoreForPerson() {
       let person = this.searchDetails.firstName.trim() + " " + this.searchDetails.lastName.trim();
-      let invitee = obj.find(item => item.name.includes(person))
+      let invitee = obj.find(item => item.name.toLowerCase().includes(person.toLowerCase()))
+
+      console.log(JSON.stringify(invitee));
 
       let dbInvitee = null;
       if (invitee) {
-         dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: `${invitee.id}` }}));
+        dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: {id: `${invitee.id}`}}))
+            .then(resp => console.log(resp))
+            .catch(e => console.log(e));
       }
 
       if (dbInvitee && dbInvitee.isAttending) {
         this.$bvModal.show('modal-attending');
       } else if (!invitee) {
-        this.makeToast(
-            'danger',
-            "Sorry, but we couldn't find you on our reservation list. Check the spelling of your name, or try a different variation.",
-            `Unable to find ${this.sanitizedFullName}`
-        );
+        this.$emit("cant-find-toast", person);
       } else if (this.overrideReservation && dbInvitee) {
         await API.graphql(graphqlOperation(updateAttending, {
           input: {
@@ -91,7 +91,7 @@ export default {
             isAttending: false,
             submitObject: null
           }
-        }));
+        })).then(resp => console.log(resp)).catch(e => console.log(e));
 
         this.$emit("invitee-found", {
           partyDetails: invitee,
@@ -99,7 +99,13 @@ export default {
         });
       } else {
         await API.graphql(graphqlOperation(
-            createAttending, {input: {id: `${invitee.id}`, isAttending: false, submitObject: null}}));
+            createAttending, {
+              input: {
+                id: `${invitee.id}`,
+                isAttending: false,
+                submitObject: null
+              }
+            })).then(resp => console.log(resp)).catch(e => console.log(e));
         this.$emit("invitee-found", {
           partyDetails: invitee,
           searchDetails: this.searchDetails
