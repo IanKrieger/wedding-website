@@ -13,7 +13,11 @@
       "output": {
         "authConfig": {
           "defaultAuthentication": {
-            "authenticationType": "AWS_IAM"
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7,
+              "description": "amplify-key-quick"
+            }
           },
           "additionalAuthenticationProviders": []
         }
