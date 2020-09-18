@@ -70,9 +70,12 @@ export default {
     async searchStoreForPerson() {
       let person = this.searchDetails.firstName.trim() + " " + this.searchDetails.lastName.trim();
       let invitee = constObj.invitee.find(item => item.name.includes(person))
+
+      console.log(JSON.stringify(invitee));
+
       let dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: invitee.id }}));
 
-      console.log(invitee);
+      console.log(JSON.stringify(dbInvitee));
 
       if (dbInvitee && dbInvitee.isAttending) {
         this.$bvModal.show('modal-attending');
