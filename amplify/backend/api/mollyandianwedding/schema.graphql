@@ -1,16 +1,5 @@
-type Attending @model {
-  id: ID!,
-  isAttending: Boolean!,
-  submitObject: SubmitObject
-}
-
-type SubmitObject {
-  emailAddress: String!,
-  personDetails: [PersonDetails]!
-}
-
-type PersonDetails {
-  name: String!,
-  dietaryRestrictions: String!,
-  status: String!
+type Todo @model {
+  id: ID!
+  name: String!
+  description: String
 }

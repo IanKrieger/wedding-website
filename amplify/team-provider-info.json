@@ -1,15 +1,23 @@
 {
-  "dev": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-mollyandianwedding-dev-190144-authRole",
-      "UnauthRoleArn": "arn:aws:iam::934729656871:role/amplify-mollyandianwedding-dev-190144-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::934729656871:role/amplify-mollyandianwedding-dev-190144-authRole",
-      "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-mollyandianwedding-dev-190144-deployment",
-      "UnauthRoleName": "amplify-mollyandianwedding-dev-190144-unauthRole",
-      "StackName": "amplify-mollyandianwedding-dev-190144",
-      "StackId": "arn:aws:cloudformation:us-east-2:934729656871:stack/amplify-mollyandianwedding-dev-190144/c2667c90-f939-11ea-8dcc-06bbda7abbd6",
-      "AmplifyAppId": "d2cmfl8042544p"
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-mollyandianwedding-prod-211018-authRole",
+            "UnauthRoleArn": "arn:aws:iam::934729656871:role/amplify-mollyandianwedding-prod-211018-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::934729656871:role/amplify-mollyandianwedding-prod-211018-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-mollyandianwedding-prod-211018-deployment",
+            "UnauthRoleName": "amplify-mollyandianwedding-prod-211018-unauthRole",
+            "StackName": "amplify-mollyandianwedding-prod-211018",
+            "StackId": "arn:aws:cloudformation:us-east-2:934729656871:stack/amplify-mollyandianwedding-prod-211018/b864d220-f94b-11ea-b151-0ab7f0172fc4",
+            "AmplifyAppId": "d2uca4m9ft260l"
+        },
+        "categories": {
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d2uca4m9ft260l",
+                    "type": "manual"
+                }
+            }
+        }
     }
-  }
 }

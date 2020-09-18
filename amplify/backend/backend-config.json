@@ -1,4 +1,11 @@
 {
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "providerPlugin": "awscloudformation",
+      "type": "manual"
+    }
+  },
   "api": {
     "mollyandianwedding": {
       "service": "AppSync",
