@@ -179,7 +179,7 @@ export default {
 
       if (canSubmit) {
         await API.graphql(graphqlOperation(
-            getAttending, {input: {id: `${this.partyDetails.id}` }}
+            getAttending, {id: `${this.partyDetails.id}` }
         )).then(async resp => {
           if (resp && !resp.isAttending) {
             await API.graphql(graphqlOperation(

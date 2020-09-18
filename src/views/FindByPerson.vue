@@ -75,7 +75,7 @@ export default {
 
       let dbInvitee = null;
       if (invitee) {
-        dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: {id: `${invitee.id}`}}))
+        dbInvitee = await API.graphql(graphqlOperation(getAttending, {id: `${invitee.id}`}))
             .then(resp => console.log(resp))
             .catch(e => console.log(e));
       }
