@@ -10,6 +10,7 @@
         :search-details="searchDetails"
         :party-details="partyDetails"
         @submit-success="submitSuccess"
+        @change-again="personNotFound = true"
     >
     </person-can-rsvp>
     <router-view></router-view>

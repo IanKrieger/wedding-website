@@ -68,6 +68,7 @@
 
     <cant-find-person-modal></cant-find-person-modal>
     <add-plus-one-modal></add-plus-one-modal>
+    <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
   </b-jumbotron>
 </template>
 
@@ -77,10 +78,11 @@ import AddPlusOneModal from "@/modals/AddPlusOneModal";
 import {API, graphqlOperation} from 'aws-amplify';
 import {updateAttending} from "@/graphql/mutations";
 import {getAttending} from "@/graphql/queries";
+import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
 
 export default {
   name: "PersonCanRsvp",
-  components: {AddPlusOneModal, CantFindPersonModal},
+  components: {AlreadyAttendingModal, AddPlusOneModal, CantFindPersonModal},
   data: () => ({
     submitDetails: {
       emailAddress: "",
@@ -176,15 +178,21 @@ export default {
         let personExists = await API.graphql(graphqlOperation(
             getAttending, {input: {id: this.partyDetails.id}}))
 
-        if (personExists) {
+        if (personExists && !personExists.isAttending) {
           await API.graphql(graphqlOperation(
-              updateAttending, {input: {id: this.partyDetails.id, isAttending: true, submitObject: submitObject}}))
+              updateAttending, {input: {id: this.partyDetails.id, isAttending: true, submitObject: submitObject}}));
+          this.$emit("submit-success");
+        } else {
+          this.$bvModal.show("modal-attending");
         }
 
-        this.$emit("submit-success");
-        this.disableSubmit = false;
         console.log(JSON.stringify(submitObject));
       }
+    },
+    async changeReservation() {
+      await API.graphql(graphqlOperation(
+          updateAttending, {input: {id: this.partyDetails.id, isAttending: false, submitObject: null}}))
+      this.$emit("change-again")
     }
   }
 }

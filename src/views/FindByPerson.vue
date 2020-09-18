@@ -59,7 +59,6 @@ export default {
       firstName: "",
       lastName: ""
     },
-    buttonDisabled: true,
     overrideReservation: false
   }),
   methods: {
