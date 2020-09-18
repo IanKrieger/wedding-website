@@ -79,6 +79,10 @@ import {API, graphqlOperation} from 'aws-amplify';
 import {updateAttending} from "@/graphql/mutations";
 import {getAttending} from "@/graphql/queries";
 import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
+import Amplify from 'aws-amplify';
+import awsmobile from "@/aws-exports";
+
+Amplify.configure(awsmobile);
 
 export default {
   name: "PersonCanRsvp",

@@ -21,12 +21,12 @@
 <script type="text/javascript">
 import FindByPerson from "@/views/FindByPerson";
 import PersonCanRsvp from "@/views/PersonCanRsvp";
-
-import Amplify from 'aws-amplify';
-import awsconfig from './aws-exports';
 import SuccessSubmitModal from "@/modals/SuccessSubmitModal";
 
-Amplify.configure(awsconfig);
+import Amplify from 'aws-amplify';
+import awsmobile from "@/aws-exports";
+
+Amplify.configure(awsmobile);
 
 export default {
   name: 'App',

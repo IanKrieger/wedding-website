@@ -50,6 +50,11 @@ import {getAttending} from "@/graphql/queries";
 import {createAttending, updateAttending} from "@/graphql/mutations";
 import constObj from "@/constants/const";
 import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
+import Amplify from 'aws-amplify';
+
+import awsmobile from "@/aws-exports";
+
+Amplify.configure(awsmobile);
 
 export default {
   name: "FindByPerson",
