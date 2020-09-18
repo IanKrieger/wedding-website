@@ -1,6 +1,5 @@
 type Attending @model {
   id: ID!,
-  personId: Int!,
   isAttending: Boolean!,
   submitObject: SubmitObject
 }

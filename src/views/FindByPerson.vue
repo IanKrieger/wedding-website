@@ -73,7 +73,7 @@ export default {
 
       console.log(JSON.stringify(invitee));
 
-      let dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: invitee.id }}));
+      let dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: `${invitee.id}` }}));
 
       console.log(JSON.stringify(dbInvitee));
 
@@ -88,7 +88,7 @@ export default {
       } else if (this.overrideReservation && dbInvitee) {
         await API.graphql(graphqlOperation(updateAttending, {
           input: {
-            id: invitee.id,
+            id: `${invitee.id}`,
             isAttending: false,
             submitObject: null
           }
@@ -100,7 +100,7 @@ export default {
         });
       } else {
         await API.graphql(graphqlOperation(
-            createAttending, {input: {id: invitee.id, isAttending: false, submitObject: null}}));
+            createAttending, {input: {id: `${invitee.id}`, isAttending: false, submitObject: null}}));
         this.$emit("invitee-found", {
           partyDetails: invitee,
           searchDetails: this.searchDetails

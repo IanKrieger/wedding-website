@@ -179,11 +179,11 @@ export default {
 
       if (canSubmit) {
         let personExists = await API.graphql(graphqlOperation(
-            getAttending, {input: {id: this.partyDetails.id}}))
+            getAttending, {input: {id: `${this.partyDetails.id}` }}))
 
         if (personExists && !personExists.isAttending) {
           await API.graphql(graphqlOperation(
-              updateAttending, {input: {id: this.partyDetails.id, isAttending: true, submitObject: submitObject}}));
+              updateAttending, {input: {id: `${this.partyDetails.id}`, isAttending: true, submitObject: submitObject}}));
           this.$emit("submit-success");
         } else {
           this.$bvModal.show("modal-attending");
@@ -194,7 +194,7 @@ export default {
     },
     async changeReservation() {
       await API.graphql(graphqlOperation(
-          updateAttending, {input: {id: this.partyDetails.id, isAttending: false, submitObject: null}}))
+          updateAttending, {input: {id: `${this.partyDetails.id}`, isAttending: false, submitObject: null}}))
       this.$emit("change-again")
     }
   }
