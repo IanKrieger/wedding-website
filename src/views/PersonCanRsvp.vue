@@ -63,7 +63,7 @@
 
       <hr class="my-4">
 
-      <b-button type="submit" class="margin-bottom-15" disabled="disableSubmit">Submit.</b-button>
+      <b-button type="submit" class="margin-bottom-15">Submit.</b-button>
     </b-form>
 
     <cant-find-person-modal></cant-find-person-modal>
@@ -89,8 +89,7 @@ export default {
     },
     tableDetails: {
       tableItems: []
-    },
-    disableSubmit: true
+    }
   }),
   props: {
     partyDetails: {

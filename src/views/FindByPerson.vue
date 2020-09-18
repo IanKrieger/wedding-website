@@ -35,7 +35,7 @@
         </b-form-input>
       </b-form-group>
 
-      <b-button type="submit" pill class="margin-bottom-15" disabled="buttonDisabled">Find Me!</b-button>
+      <b-button type="submit" pill class="margin-bottom-15">Find Me!</b-button>
     </b-form>
 
     <cant-find-person-modal></cant-find-person-modal>
@@ -71,7 +71,6 @@ export default {
 
       if (dbInvitee && dbInvitee.isAttending) {
         this.$bvModal.show('modal-attending');
-        this.buttonDisabled = false;
       } else if (!invitee) {
         this.makeToast(
             'danger',
@@ -102,7 +101,6 @@ export default {
     },
     changeReservation() {
       this.overrideReservation = true;
-      this.buttonDisabled = true;
     }
   }
 }
