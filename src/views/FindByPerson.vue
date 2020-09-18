@@ -48,7 +48,7 @@ import CantFindPersonModal from "@/modals/CantFindPersonModal";
 import {API, graphqlOperation} from 'aws-amplify';
 import {getAttending} from "@/graphql/queries";
 import {createAttending, updateAttending} from "@/graphql/mutations";
-import constObj from "@/constants/const";
+import obj from "@/constants/const";
 import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
 import Amplify from 'aws-amplify';
 
@@ -69,13 +69,12 @@ export default {
   methods: {
     async searchStoreForPerson() {
       let person = this.searchDetails.firstName.trim() + " " + this.searchDetails.lastName.trim();
-      let invitee = constObj.invitee.find(item => item.name.includes(person))
+      let invitee = obj.find(item => item.name.includes(person))
 
-      console.log(JSON.stringify(invitee));
-
-      let dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: `${invitee.id}` }}));
-
-      console.log(JSON.stringify(dbInvitee));
+      let dbInvitee = null;
+      if (invitee) {
+         dbInvitee = await API.graphql(graphqlOperation(getAttending, {input: { id: `${invitee.id}` }}));
+      }
 
       if (dbInvitee && dbInvitee.isAttending) {
         this.$bvModal.show('modal-attending');

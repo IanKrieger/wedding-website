@@ -6,8 +6,8 @@ Vue.use(VueRouter);
 
 const routes = [
     {
-        path: "/rsvplist",
-        name: "RsvpList",
+        path: "/rsvp",
+        name: "RSVP",
         component: HasSubmittedRsvp
     }
 ]

@@ -25,7 +25,5 @@ const invitee = [
     }
 ]
 
-export default {
-    invitee: invitee
-};
+export default invitee;
 
