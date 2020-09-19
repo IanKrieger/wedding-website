@@ -49,14 +49,13 @@
 
       <b-form-group
           id="input-group-3"
-          label="Email address:"
+          label="Email address (not required, but just in case):"
           label-for="input-3"
       >
         <b-form-input
             id="input-3"
             v-model="attending.emailAddress"
             type="email"
-            required
             placeholder="Email address"
         ></b-form-input>
       </b-form-group>
