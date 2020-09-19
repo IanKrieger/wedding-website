@@ -68,6 +68,9 @@
     <cant-find-person-modal></cant-find-person-modal>
     <add-plus-one-modal></add-plus-one-modal>
     <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
+    <b-alert v-model="showAlert" variant="danger" dismissible>
+      Something unexpected happened. Try again, or come back later.
+    </b-alert>
   </b-jumbotron>
 </template>
 
@@ -97,7 +100,10 @@ export default {
       this.attending = resp.data.getAttending;
       this.partyDetails = obj.find(item => item.id + "" === id);
       console.log(JSON.stringify(this.partyDetails));
-    }).catch(e => console.log(e))
+    }).catch(e => {
+      console.log(e);
+      this.showAlert = true;
+    })
   },
   data: () => ({
     tableDetails: {
@@ -115,7 +121,8 @@ export default {
       name: "",
       hasPlusOne: false,
       groupList: []
-    }
+    },
+    showAlert: false
   }),
   computed: {
     welcomeMessage() {
@@ -210,7 +217,10 @@ export default {
       ).then(resp => {
         console.log(resp);
         this.$router.replace({ name: "FindPerson" });
-      }).catch(e => console.log(e));
+      }).catch(e => {
+        console.log(e);
+        this.showAlert = true;
+      });
     },
     async submitReservation(submitObject) {
         let data = null
@@ -218,7 +228,10 @@ export default {
             getAttending, {id: `${submitObject.id}`}
         )).then(resp => {
           data = resp.data.getAttending;
-        }).catch(e => console.log(e));
+        }).catch(e => {
+          console.log(e);
+          this.showAlert = true;
+        });
 
         if (data && !data.isAttending) {
           await API.graphql(graphqlOperation(
@@ -229,7 +242,10 @@ export default {
           ).then(resp => {
             console.log(JSON.stringify(resp));
             this.$router.push({ name: "Success"})
-          }).catch(e => console.log(e));
+          }).catch(e => {
+            console.log(e);
+            this.showAlert = true;
+          });
         } else {
           this.$bvModal.show("modal-attending");
         }
