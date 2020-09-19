@@ -1,0 +1,13 @@
+type Attending @model {
+  id: ID!,
+  isAttending: Boolean!,
+  emailAddress: String,
+  displayName: String,
+  personDetails: [PersonDetails]
+}
+
+type PersonDetails {
+  name: String,
+  dietaryRestrictions: String,
+  status: String
+}
