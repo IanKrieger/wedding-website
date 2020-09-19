@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="modal-attending" centered title="RSVP Submitted!" @show="showConfetti" @ok="hideConfetti" @close="hideConfetti">
+  <b-modal id="modal-success" centered title="RSVP Submitted!" @show="showConfetti" @ok="hideConfetti" @close="hideConfetti">
     <p>It's time to celebrate! You have submitted your RSVP!</p>
     <p>We can't wait to see <strong>{{ groupString }} at the wedding!</strong></p>
   </b-modal>

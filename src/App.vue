@@ -63,7 +63,7 @@ export default {
       })
     },
     submitSuccess() {
-      this.$bvModal.show('modal-attending');
+      this.$bvModal.show('modal-success');
     },
     cantFindToast(person) {
       this.makeToast(
@@ -71,11 +71,6 @@ export default {
           "Sorry, but we couldn't find you on our reservation list. Check the spelling of your name, or try a different variation.",
           `Unable to find ${person}`
       );
-    }
-  },
-  computed: {
-    sanitizedFullName() {
-      return this.searchDetails.firstName.trim() + " " + this.searchDetails.firstName.trim();
     }
   }
 }
@@ -118,7 +113,8 @@ input[type=text],
 textarea {
   &:focus {
     outline: 0 !important;
-    border-color: gold !important;
+    border-color: navy !important;
+    border: 1px solid gold; !important;
   }
 }
 

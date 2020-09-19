@@ -75,45 +75,57 @@ export default {
 
       let dbInvitee = null;
       if (invitee) {
-        dbInvitee = await API.graphql(graphqlOperation(getAttending, {id: `${invitee.id}`}))
-            .then(resp => console.log(resp))
-            .catch(e => console.log(e));
+        await API.graphql(graphqlOperation(getAttending, {id: `${invitee.id}`}))
+            .then(resp => {
+              dbInvitee = resp
+            }).catch(e => console.log(e));
+      } else {
+        this.$emit("cant-find-toast", person);
       }
 
       if (dbInvitee && dbInvitee.isAttending) {
         this.$bvModal.show('modal-attending');
-      } else if (!invitee) {
-        this.$emit("cant-find-toast", person);
       } else if (this.overrideReservation && dbInvitee) {
-        await API.graphql(graphqlOperation(updateAttending, {
-          input: {
-            id: `${invitee.id}`,
-            isAttending: false,
-            submitObject: null
-          }
-        })).then(resp => console.log(resp)).catch(e => console.log(e));
-
+        await this.updateExistingInvitee(invitee);
+      } else if (dbInvitee && !dbInvitee.isAttending) {
         this.$emit("invitee-found", {
           partyDetails: invitee,
           searchDetails: this.searchDetails
         });
       } else {
-        await API.graphql(graphqlOperation(
-            createAttending, {
-              input: {
-                id: `${invitee.id}`,
-                isAttending: false,
-                submitObject: null
-              }
-            })).then(resp => console.log(resp)).catch(e => console.log(e));
-        this.$emit("invitee-found", {
-          partyDetails: invitee,
-          searchDetails: this.searchDetails
-        });
+        await this.createInvitee(invitee);
       }
     },
     changeReservation() {
       this.overrideReservation = true;
+    },
+    async updateExistingInvitee(invitee) {
+      await API.graphql(graphqlOperation(updateAttending, {
+        input: {
+          id: `${invitee.id}`,
+          isAttending: false,
+          submitObject: null
+        }
+      })).then(resp => console.log(resp)).catch(e => console.log(e));
+
+      this.$emit("invitee-found", {
+        partyDetails: invitee,
+        searchDetails: this.searchDetails
+      });
+    },
+    async createInvitee(invitee) {
+      await API.graphql(graphqlOperation(
+          createAttending, {
+            input: {
+              id: `${invitee.id}`,
+              isAttending: false,
+              submitObject: null
+            }
+          })).then(resp => console.log(resp)).catch(e => console.log(e));
+      this.$emit("invitee-found", {
+        partyDetails: invitee,
+        searchDetails: this.searchDetails
+      });
     }
   }
 }

@@ -5,12 +5,12 @@ type Attending @model {
 }
 
 type SubmitObject {
-  emailAddress: String!,
-  personDetails: [PersonDetails]!
+  emailAddress: String,
+  personDetails: [PersonDetails]
 }
 
 type PersonDetails {
-  name: String!,
-  dietaryRestrictions: String!,
-  status: String!
+  name: String,
+  dietaryRestrictions: String,
+  status: String
 }
