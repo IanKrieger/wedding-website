@@ -66,7 +66,7 @@
     </b-form>
 
     <cant-find-person-modal></cant-find-person-modal>
-    <add-plus-one-modal></add-plus-one-modal>
+    <add-plus-one-modal @plus-one-added="addPlusOne"></add-plus-one-modal>
     <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
     <b-alert v-model="showAlert" variant="danger" dismissible>
       Something unexpected happened. Try again, or come back later.
@@ -256,6 +256,10 @@ export default {
         variant: variant,
         solid: true
       })
+    },
+    addPlusOne(name)  {
+      this.partyDetails.groupList.push(name);
+      this.partyDetails.hasPlusOne = false;
     }
   }
 }
