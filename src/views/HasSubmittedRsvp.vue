@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron class="no-background">
       <h3 style="color: black; text-align: center; margin-bottom: 10px">
-        <strong>{{ tableItems.length }} / {{ inviteeLength }}</strong> have RSVP'd <br/>
+        <strong>{{ attendingResult.length }} / {{ inviteeLength }}</strong> have RSVP'd <br/>
         <strong>{{ accepted }}</strong> have accepted.
         <br/>
         <strong>{{ declined }}</strong> have declined.
