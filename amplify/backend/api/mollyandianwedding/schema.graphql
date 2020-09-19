@@ -1,11 +1,8 @@
 type Attending @model {
   id: ID!,
   isAttending: Boolean!,
-  submitObject: SubmitObject
-}
-
-type SubmitObject {
   emailAddress: String,
+  displayName: String,
   personDetails: [PersonDetails]
 }
 

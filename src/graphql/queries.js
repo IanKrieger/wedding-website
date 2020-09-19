@@ -6,13 +6,12 @@ export const getAttending = /* GraphQL */ `
     getAttending(id: $id) {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt
@@ -29,8 +28,12 @@ export const listAttendings = /* GraphQL */ `
       items {
         id
         isAttending
-        submitObject {
-          emailAddress
+        emailAddress
+        displayName
+        personDetails {
+          name
+          dietaryRestrictions
+          status
         }
         createdAt
         updatedAt

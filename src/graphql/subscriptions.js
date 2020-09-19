@@ -6,13 +6,12 @@ export const onCreateAttending = /* GraphQL */ `
     onCreateAttending {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt
@@ -24,13 +23,12 @@ export const onUpdateAttending = /* GraphQL */ `
     onUpdateAttending {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt
@@ -42,13 +40,12 @@ export const onDeleteAttending = /* GraphQL */ `
     onDeleteAttending {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt

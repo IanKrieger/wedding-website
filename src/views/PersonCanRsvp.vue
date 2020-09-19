@@ -54,7 +54,7 @@
       >
         <b-form-input
             id="input-3"
-            v-model="submitDetails.emailAddress"
+            v-model="attending.emailAddress"
             type="email"
             required
             placeholder="Email address"
@@ -80,6 +80,7 @@ import {updateAttending} from "@/graphql/mutations";
 import {getAttending} from "@/graphql/queries";
 import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
 import Amplify from 'aws-amplify';
+import obj from "@/constants/const";
 import awsmobile from "@/aws-exports";
 
 Amplify.configure(awsmobile);
@@ -87,31 +88,40 @@ Amplify.configure(awsmobile);
 export default {
   name: "PersonCanRsvp",
   components: {AlreadyAttendingModal, AddPlusOneModal, CantFindPersonModal},
+  async mounted() {
+    let id = this.$route.params.id;
+
+    await API.graphql(graphqlOperation(
+        getAttending, {id: `${id}`}
+    )).then(async resp => {
+      console.log(resp);
+      this.attending = resp.data.getAttending;
+      this.partyDetails = obj.find(item => item.id + "" === id);
+      console.log(JSON.stringify(this.partyDetails));
+    }).catch(e => console.log(e))
+  },
   data: () => ({
-    submitDetails: {
-      emailAddress: "",
-    },
     tableDetails: {
       tableItems: []
-    }
-  }),
-  props: {
-    partyDetails: {
-      name: "",
+    },
+    attending: {
       id: 0,
       isAttending: false,
+      emailAddress: "",
+      displayName: "",
+      personDetails: null
+    },
+    partyDetails: {
+      id: 0,
+      name: "",
       hasPlusOne: false,
       groupList: []
-    },
-    searchDetails: {
-      firstName: "",
-      lastName: "",
-    },
-  },
+    }
+  }),
   computed: {
     welcomeMessage() {
-      if (this.partyDetails) {
-        return `${this.searchDetails.lastName}, party of ${this.partyDetails.groupList.length}`;
+      if (this.partyDetails && this.partyDetails.groupList.length !== 0) {
+        return `${this.attending.displayName}, party of ${this.partyDetails.groupList.length}`;
       } else {
         return "Welcome!";
       }
@@ -147,10 +157,7 @@ export default {
     async submitForm() {
       let groupDetails = this.partyDetails.groupList;
 
-      let submitObject = {
-        personDetails: [],
-        emailAddress: this.submitDetails.emailAddress
-      }
+      let personDetails = [];
 
       let canSubmit = false;
       for (let i = 0; i < groupDetails.length; i++) {
@@ -159,7 +166,7 @@ export default {
         let status = this.findInTable(name);
 
         if (status) {
-          submitObject.personDetails.push({
+          personDetails.push({
             name: name,
             dietaryRestrictions: val ? val : "None",
             status: status
@@ -178,6 +185,14 @@ export default {
       }
 
       if (canSubmit) {
+
+        let submitObject = {
+          id: `${this.attending.id}`,
+          isAttending: true,
+          emailAddress: this.attending.emailAddress,
+          personDetails: personDetails
+        }
+
         await this.submitReservation(submitObject);
         console.log(JSON.stringify(submitObject));
       }
@@ -185,28 +200,47 @@ export default {
     async changeReservation() {
       await API.graphql(graphqlOperation(
           updateAttending,
-          {input: {id: `${this.partyDetails.id}`, isAttending: false, submitObject: null}})
-      ).then(resp  => {
+          {
+            input: {
+              id: `${this.partyDetails.id}`,
+              isAttending: false,
+              emailAddress: null,
+              personDetails: null
+            }
+          })
+      ).then(resp => {
         console.log(resp);
-        this.$emit("change-again");
+        this.$router.replace({ name: "FindPerson" });
       }).catch(e => console.log(e));
     },
     async submitReservation(submitObject) {
-      await API.graphql(graphqlOperation(
-          getAttending, {id: `${this.partyDetails.id}` }
-      )).then(async resp => {
-        if (resp && !resp.isAttending) {
+        let data = null
+        await API.graphql(graphqlOperation(
+            getAttending, {id: `${submitObject.id}`}
+        )).then(resp => {
+          data = resp.data.getAttending;
+        }).catch(e => console.log(e));
+
+        if (data && !data.isAttending) {
           await API.graphql(graphqlOperation(
               updateAttending,
-              {input: {id: `${this.partyDetails.id}`, isAttending: true, submitObject: submitObject}})
+              {
+                input: submitObject
+              })
           ).then(resp => {
-            console.log(resp);
-            this.$emit("submit-success");
+            console.log(JSON.stringify(resp));
+            this.$router.push({ name: "Success"})
           }).catch(e => console.log(e));
         } else {
           this.$bvModal.show("modal-attending");
         }
-      }).catch(e => console.log(e));
+    },
+    makeToast(variant = null, message, title) {
+      this.$bvToast.toast(message, {
+        title: title,
+        variant: variant,
+        solid: true
+      })
     }
   }
 }

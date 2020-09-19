@@ -1,78 +1,13 @@
 <template>
   <div>
-    <find-by-person
-        v-if="personNotFound"
-        @invitee-found="searchStoreForPerson"
-        @cant-find-toast="cantFindToast"
-    >
-    </find-by-person>
-    <person-can-rsvp
-        v-else
-        :search-details="searchDetails"
-        :party-details="partyDetails"
-        @submit-success="submitSuccess"
-        @change-again="personNotFound = true"
-    >
-    </person-can-rsvp>
     <router-view></router-view>
-    <success-submit-modal :group-list="partyDetails.groupList"></success-submit-modal>
   </div>
 </template>
 
 <script type="text/javascript">
-import FindByPerson from "@/views/FindByPerson";
-import PersonCanRsvp from "@/views/PersonCanRsvp";
-import SuccessSubmitModal from "@/modals/SuccessSubmitModal";
-
-import Amplify from 'aws-amplify';
-import awsmobile from "@/aws-exports";
-
-Amplify.configure(awsmobile);
 
 export default {
-  name: 'App',
-  components: {SuccessSubmitModal, PersonCanRsvp, FindByPerson},
-  data: () => ({
-    personNotFound: {
-      value: true
-    },
-    partyDetails: {
-      name: "Test Person",
-      id: 0,
-      isAttending: false,
-      hasPlusOne: false,
-      groupList: ["Test Person"]
-    },
-    searchDetails: {
-      firstName: "",
-      lastName: ""
-    }
-  }),
-  methods: {
-    searchStoreForPerson(object) {
-      this.searchDetails = object.searchDetails;
-      this.partyDetails = object.partyDetails;
-
-      this.personNotFound = false;
-    },
-    makeToast(variant = null, message, title) {
-      this.$bvToast.toast(message, {
-        title: title,
-        variant: variant,
-        solid: true
-      })
-    },
-    submitSuccess() {
-      this.$bvModal.show('modal-success');
-    },
-    cantFindToast(person) {
-      this.makeToast(
-          'danger',
-          "Sorry, but we couldn't find you on our reservation list. Check the spelling of your name, or try a different variation.",
-          `Unable to find ${person}`
-      );
-    }
-  }
+  name: 'App'
 }
 </script>
 
@@ -113,8 +48,7 @@ input[type=text],
 textarea {
   &:focus {
     outline: 0 !important;
-    border-color: navy !important;
-    border: 1px solid gold; !important;
+    border: 1px solid navy !important;
   }
 }
 

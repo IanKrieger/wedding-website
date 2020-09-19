@@ -9,13 +9,12 @@ export const createAttending = /* GraphQL */ `
     createAttending(input: $input, condition: $condition) {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt
@@ -30,13 +29,12 @@ export const updateAttending = /* GraphQL */ `
     updateAttending(input: $input, condition: $condition) {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt
@@ -51,13 +49,12 @@ export const deleteAttending = /* GraphQL */ `
     deleteAttending(input: $input, condition: $condition) {
       id
       isAttending
-      submitObject {
-        emailAddress
-        personDetails {
-          name
-          dietaryRestrictions
-          status
-        }
+      emailAddress
+      displayName
+      personDetails {
+        name
+        dietaryRestrictions
+        status
       }
       createdAt
       updatedAt

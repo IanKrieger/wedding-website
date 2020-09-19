@@ -64,54 +64,67 @@ export default {
       firstName: "",
       lastName: ""
     },
-    overrideReservation: false
+    overrideReservation: false,
+    attending: {
+      id: 0,
+      isAttending: false,
+      emailAddress: "",
+      displayName: "",
+      personDetails: null
+    },
   }),
   methods: {
     async searchStoreForPerson() {
       let person = this.searchDetails.firstName.trim() + " " + this.searchDetails.lastName.trim();
       let invitee = obj.find(item => item.name.toLowerCase().includes(person.toLowerCase()))
 
-      console.log(JSON.stringify(invitee));
-
       let dbInvitee = null;
       if (invitee) {
         await API.graphql(graphqlOperation(getAttending, {id: `${invitee.id}`}))
             .then(resp => {
-              dbInvitee = resp
+              dbInvitee = resp.data.getAttending
+
+              if (dbInvitee) {
+                this.attending = dbInvitee;
+              }
+              console.log(JSON.stringify(dbInvitee));
             }).catch(e => console.log(e));
       } else {
-        this.$emit("cant-find-toast", person);
+        this.makeToast(
+            'danger',
+            `Unable to find a reservation for ${person}. Try a different variation of your name.`
+            + '\n If that does not work, reach out to us using the contact info found below the "Find Me!" button.',
+            `Unable to find ${person}.`
+        )
       }
 
-      if (dbInvitee && dbInvitee.isAttending) {
+      if (dbInvitee && dbInvitee.isAttending && !this.overrideReservation) {
         this.$bvModal.show('modal-attending');
       } else if (this.overrideReservation && dbInvitee) {
         await this.updateExistingInvitee(invitee);
       } else if (dbInvitee && !dbInvitee.isAttending) {
-        this.$emit("invitee-found", {
-          partyDetails: invitee,
-          searchDetails: this.searchDetails
-        });
+        await this.$router.push(`/submit/${dbInvitee.id}`)
       } else {
         await this.createInvitee(invitee);
       }
     },
     changeReservation() {
       this.overrideReservation = true;
+      this.updateExistingInvitee(this.attending);
     },
     async updateExistingInvitee(invitee) {
       await API.graphql(graphqlOperation(updateAttending, {
         input: {
           id: `${invitee.id}`,
           isAttending: false,
-          submitObject: null
+          emailAddress: null,
+          displayName: this.searchDetails.lastName,
+          personDetails: null
         }
-      })).then(resp => console.log(resp)).catch(e => console.log(e));
-
-      this.$emit("invitee-found", {
-        partyDetails: invitee,
-        searchDetails: this.searchDetails
-      });
+      })).then(resp => {
+        console.log(resp)
+        this.$router.push(`/submit/${invitee.id}`);
+      }).catch(e => console.log(e));
     },
     async createInvitee(invitee) {
       await API.graphql(graphqlOperation(
@@ -119,13 +132,21 @@ export default {
             input: {
               id: `${invitee.id}`,
               isAttending: false,
-              submitObject: null
+              emailAddress: null,
+              displayName: this.searchDetails.lastName,
+              personDetails: null
             }
-          })).then(resp => console.log(resp)).catch(e => console.log(e));
-      this.$emit("invitee-found", {
-        partyDetails: invitee,
-        searchDetails: this.searchDetails
-      });
+          })).then(resp => {
+        console.log(JSON.stringify(resp));
+        this.$router.push(`/submit/${invitee.id}`)
+      }).catch(e => console.log(e));
+    },
+    makeToast(variant = null, message, title) {
+      this.$bvToast.toast(message, {
+        title: title,
+        variant: variant,
+        solid: true
+      })
     }
   }
 }

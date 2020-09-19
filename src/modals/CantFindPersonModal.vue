@@ -3,7 +3,7 @@
     <b-link v-b-modal.modal-center class="link-override"> Click this if you are having trouble with the RSVP form.
     </b-link>
 
-    <b-modal id="modal-center" centered title="Extra Information">
+    <b-modal id="modal-center" centered title="Contact Information">
       <p> If you can't seem to find yourself on the RSVP list or someone from your party is missing, contact Ian & Molly
         and we will get you squared away.</p>
       <ul>
