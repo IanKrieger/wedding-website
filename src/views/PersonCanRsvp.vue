@@ -266,5 +266,13 @@ export default {
 </script>
 
 <style scoped>
+@media(max-width: 768px) {
+  .display-3 {
+    font-size: 3.0em;
+  }
 
+  .card-body {
+    padding: 2px 2px 2px 2px;
+  }
+}
 </style>

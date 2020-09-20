@@ -13,7 +13,6 @@ export default {
 
 <style lang="scss">
 .jumbotron {
-  padding: 30px 60px !important;
   margin: 50px 50px 50px 50px !important;
   background-color: #800020 !important;
   color: white !important;
@@ -38,6 +37,13 @@ h4 {
 
 .buttons {
   display: flex;
+}
+
+@media (max-width: 768px) {
+  .buttons  {
+    flex-grow: 0;
+    flex-wrap: wrap;
+  }
 }
 
 .custom-button {

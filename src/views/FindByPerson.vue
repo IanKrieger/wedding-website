@@ -1,12 +1,12 @@
 <template>
-  <b-jumbotron>
-    <template v-slot:header>Welcome to Molly & Ian's RSVP website.</template>
+  <b-jumbotron class="flex-display">
+    <template v-slot:header class="mobile-display">RSVP for Molly & Ian's Wedding.</template>
 
     <template v-slot:lead>
       If you are a family or a couple, only type in one name and we'll find everyone associated with your party.
     </template>
 
-    <hr class="my-4">
+    <hr>
 
     <b-form @submit.prevent="searchStoreForPerson">
       <b-form-group
@@ -166,5 +166,17 @@ export default {
 </script>
 
 <style scoped>
+@media(max-width: 768px) {
+  .display-3 {
+    font-size: 3.0em;
+  }
 
+  .lead {
+    font-size: 1.0em;
+  }
+}
+
+hr {
+  flex-grow: 1;
+}
 </style>

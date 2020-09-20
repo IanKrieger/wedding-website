@@ -7,8 +7,8 @@
       Close this window, or click the button below to change your reservation.
     </template>
 
-    <h2 style="color: navy">Time left to change RSVP:</h2>
-    <h3 style="color: navy">{{ timeLeft }}</h3>
+    <h2 style="color: navy; text-align: center">Time left to change RSVP:</h2>
+    <h3 style="color: navy; text-align: center">{{ timeLeft }}</h3>
 
     <b-button variant="outline-secondary" class="max-width" @click="submitRedirect">Change my RSVP details.</b-button>
   </b-jumbotron>
@@ -73,5 +73,15 @@ export default {
   flex-grow: 1;
   margin-top: 10px;
   margin-bottom: 10px !important;
+}
+
+@media(max-width: 768px) {
+  .display-3 {
+    font-size: 3.5em;
+  }
+
+  .jumbotron {
+    padding: 1px 1px !important;
+  }
 }
 </style>
