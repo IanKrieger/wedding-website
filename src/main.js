@@ -6,7 +6,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VueConfetti from 'vue-confetti'
 import router from "./router";
+import VueMeta from 'vue-meta'
 
+Vue.use(VueMeta);
 Vue.use(VueConfetti)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)

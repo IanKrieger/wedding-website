@@ -18,6 +18,13 @@ export default {
   data: () => ({
     isInternetExplorer: false
   }),
+  metaInfo: {
+    title: "Krieger Wedding RSVP",
+    meta: [
+      { name: "description", content: "RSVP for Molly & Ian's wedding." },
+      { name: "keywords", content: "krieger,wedding,rsvp,RSVP,tillis" }
+    ]
+  },
   components: { AlertCircleIcon },
   mounted() {
     const browser = Bowser.getParser(window.navigator.userAgent);
