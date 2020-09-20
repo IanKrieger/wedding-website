@@ -40,6 +40,9 @@
 
     <cant-find-person-modal></cant-find-person-modal>
     <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
+    <b-alert v-model="showAlert" variant="danger" dismissible>
+      Something unexpected happened. Try again, or come back later.
+    </b-alert>
   </b-jumbotron>
 </template>
 
@@ -72,6 +75,7 @@ export default {
       displayName: "",
       personDetails: null
     },
+    showAlert: false
   }),
   methods: {
     async searchStoreForPerson() {
@@ -88,7 +92,10 @@ export default {
                 this.attending = dbInvitee;
               }
               console.log(JSON.stringify(dbInvitee));
-            }).catch(e => console.log(e));
+            }).catch(e => {
+              console.log(e);
+              this.showAlert = true;
+            });
       } else {
         this.makeToast(
             'danger',
@@ -124,7 +131,10 @@ export default {
       })).then(resp => {
         console.log(resp)
         this.$router.push(`/submit/${invitee.id}`);
-      }).catch(e => console.log(e));
+      }).catch(e => {
+        console.log(e);
+        this.showAlert = true;
+      });
     },
     async createInvitee(invitee) {
       await API.graphql(graphqlOperation(
@@ -139,7 +149,10 @@ export default {
           })).then(resp => {
         console.log(JSON.stringify(resp));
         this.$router.push(`/submit/${invitee.id}`)
-      }).catch(e => console.log(e));
+      }).catch(e => {
+        this.showAlert = true;
+        console.log(e);
+      });
     },
     makeToast(variant = null, message, title) {
       this.$bvToast.toast(message, {

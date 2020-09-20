@@ -2,7 +2,7 @@
   <div>
     <b-jumbotron class="no-background">
       <h3 style="color: black; text-align: center; margin-bottom: 10px">
-        <strong>{{ tableItems.length }} / {{ inviteeLength }}</strong> have RSVP'd <br/>
+        <strong>{{ attendingResult.length }} / {{ inviteeLength }}</strong> have RSVP'd <br/>
         <strong>{{ accepted }}</strong> have accepted.
         <br/>
         <strong>{{ declined }}</strong> have declined.
@@ -14,6 +14,9 @@
         <h1 style="text-align: center; size: 200px; color: black"> Nothing Here Yet. 🤷‍️</h1>
       </div>
     </b-jumbotron>
+    <b-alert v-model="showAlert" variant="danger" dismissible>
+      Something unexpected happened. Try again, or come back later.
+    </b-alert>
   </div>
 </template>
 
@@ -35,11 +38,15 @@ export default {
           let data = resp.data.listAttendings.items;
           this.attendingResult = data.filter(person => person.isAttending);
           console.log(JSON.stringify(data));
-        }).catch(e => console.log(e));
+        }).catch(e => {
+          console.log(e);
+          this.showAlert = true;
+        });
   },
   data: () => ({
     attendingResult: null,
-    inviteeLength: obj.length
+    inviteeLength: obj.length,
+    showAlert: false
   }),
   computed: {
     tableItems() {
