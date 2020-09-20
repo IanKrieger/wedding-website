@@ -3,7 +3,12 @@
     <template v-slot:header class="mobile-display">RSVP for Molly & Ian's Wedding.</template>
 
     <template v-slot:lead>
-      If you are a family or a couple, only type in one name and we'll find everyone associated with your party.
+      <div>
+        Type in your first name and last name below. Once you are done press "Find Me!"
+      </div>
+      <div>
+        If you are a family or a couple, only type in one name and we'll find everyone associated with your party.
+      </div>
     </template>
 
     <hr>

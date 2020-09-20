@@ -2,9 +2,15 @@
   <b-jumbotron>
     <template v-slot:header>{{ welcomeMessage }}</template>
 
-    <template v-if="partyDetails.hasPlusOne" v-slot:lead>
-      You are allowed to bring a guest, let us know who you are bringing.
-      <b-button v-b-modal.add-modal>Add my plus one.</b-button>
+    <template v-slot:lead>
+      <div v-if="partyDetails.hasPlusOne">
+        You are allowed to bring a guest, let us know who you are bringing.
+        <b-button v-b-modal.add-modal>Add my plus one.</b-button>
+      </div>
+      <div>
+        Fill out the information using the cards below. Make sure each member of your party accepts or declines.
+        Once you are done hit "Submit".
+      </div>
     </template>
 
     <hr class="my-4">
