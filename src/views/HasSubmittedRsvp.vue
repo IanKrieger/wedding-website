@@ -98,4 +98,10 @@ export default {
   background-color: white !important;
   border: 1px solid black !important;
 }
+
+@media (max-width: 768px) {
+  .no-background {
+    margin: 5px 5px 5px 5px !important;
+  }
+}
 </style>
