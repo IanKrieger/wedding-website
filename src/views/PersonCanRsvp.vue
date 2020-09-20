@@ -228,6 +228,7 @@ export default {
             getAttending, {id: `${submitObject.id}`}
         )).then(resp => {
           data = resp.data.getAttending;
+
         }).catch(e => {
           console.log(e);
           this.showAlert = true;
