@@ -49,7 +49,7 @@
 
       <b-form-group
           id="input-group-3"
-          label="Email address (not required, but just in case):"
+          label="Email address:"
           label-for="input-3"
       >
         <b-form-input
@@ -58,6 +58,8 @@
             type="email"
             placeholder="Email address"
         ></b-form-input>
+
+        <small style="color: white; font-style: italic">Just in case we need to contact you in these uncertain times.</small>
       </b-form-group>
 
       <hr class="my-4">

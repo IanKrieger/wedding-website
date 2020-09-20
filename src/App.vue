@@ -1,13 +1,30 @@
 <template>
   <div>
-    <router-view></router-view>
+    <div v-if="isInternetExplorer" class="internet-explorer">
+      <alert-circle-icon size="7x" class="red"></alert-circle-icon>
+      <h2>Sorry, this website is not available with Internet Explorer.</h2>
+      <h3>If you do not already have Google Chrome, <a href="https://www.google.com/chrome/" target="_blank">Download it here.</a></h3>
+    </div>
+    <router-view v-else></router-view>
   </div>
 </template>
 
 <script type="text/javascript">
+import Bowser from "bowser";
+import { AlertCircleIcon } from "vue-feather-icons";
 
 export default {
-  name: 'App'
+  name: 'App',
+  data: () => ({
+    isInternetExplorer: false
+  }),
+  components: { AlertCircleIcon },
+  mounted() {
+    const browser = Bowser.getParser(window.navigator.userAgent);
+    this.isInternetExplorer = browser
+        .getBrowserName(true)
+        .includes("Internet Explorer".toLowerCase());
+  }
 }
 </script>
 
@@ -64,5 +81,18 @@ textarea {
 
 .navy-text {
   color: navy !important;
+}
+
+.internet-explorer {
+  background-color: white;
+  border: 1px solid black;
+  margin: 10px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.red {
+  color: red;
 }
 </style>
