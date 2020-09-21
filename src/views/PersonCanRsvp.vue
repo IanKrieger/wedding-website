@@ -75,7 +75,7 @@
         <hr class="my-4">
 
         <b-button type="submit" class="margin-bottom-15" :disabled="buttonDisabled">
-          <send-icon size="1.0x" style="margin-right: 5px"/>
+          <send-icon size="1.0x" style="margin-right: 5px" v-if="!buttonLoading"/>
           <b-spinner small v-if="buttonLoading"></b-spinner>
           <span v-if="buttonLoading" style="margin-left: 5px">Submitting...</span>
           <span v-if="!buttonLoading">Submit.</span>

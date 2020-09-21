@@ -10,7 +10,10 @@
     <h2 style="color: navy; text-align: center">Time left to change RSVP:</h2>
     <h3 style="color: navy; text-align: center">{{ timeLeft }}</h3>
 
-    <b-button variant="outline-secondary" class="max-width" @click="submitRedirect">Change my RSVP details.</b-button>
+    <b-button variant="outline-secondary" class="max-width" @click="submitRedirect">
+      <b-icon icon="calendar" />
+      Change my RSVP details.
+    </b-button>
   </b-jumbotron>
 </template>
 
@@ -34,7 +37,7 @@ export default {
       let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      self.timeLeft = `${days} Days : ${hours} Hours :${minutes} Mins : ${seconds} Secs.`
+      self.timeLeft = `${days} Days : ${hours} Hours : ${minutes} Mins : ${seconds} Secs.`
     }, 100);
   },
   data: () => ({

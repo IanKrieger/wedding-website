@@ -41,7 +41,7 @@
       </b-form-group>
 
       <b-button type="submit" pill class="margin-bottom-15" :disabled="buttonDisabled">
-        <b-icon icon="search" style="margin-right: 5px"></b-icon>
+        <b-icon icon="search" style="margin-right: 5px" v-if="!buttonLoading"/>
         <b-spinner small v-if="buttonLoading"></b-spinner>
         <span v-if="buttonLoading" style="margin-left: 5px">Finding...</span>
         <span v-if="!buttonLoading">Find Me!</span>
