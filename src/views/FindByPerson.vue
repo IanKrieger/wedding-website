@@ -182,6 +182,7 @@ export default {
       this.$bvToast.toast(message, {
         title: title,
         variant: variant,
+        toaster: "b-toaster-top-center",
         solid: true
       })
     }
@@ -197,6 +198,13 @@ export default {
 
   .lead {
     font-size: 1.0em;
+  }
+}
+
+@media (max-width: 1200px) {
+  .flex-display {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
   }
 }
 

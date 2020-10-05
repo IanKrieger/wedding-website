@@ -1,102 +1,105 @@
 <template>
-  <b-overlay :show="showOverlay" rounded="sm">
-    <b-jumbotron>
-      <template v-slot:header>{{ welcomeMessage }}</template>
+  <div>
+    <b-overlay :show="showOverlay" rounded="sm">
+      <b-jumbotron class="jumbotron-override">
+        <template v-slot:header>{{ welcomeMessage }}</template>
 
-      <template v-slot:lead>
-        <div v-if="partyDetails.hasPlusOne">
-          You are allowed to bring a guest, let us know who you are bringing.
-          <b-button v-b-modal.add-modal>Add my plus one.</b-button>
-        </div>
-        <div>
-          Fill out the information using the cards below. Make sure each member of your party accepts or declines.
-          Once you are done hit "Submit".
+        <template v-slot:lead>
+          <div>
+            <div v-if="partyDetails.hasPlusOne" class="flex-lead">
+              You are allowed to bring a guest, let us know who you are bringing.
+              <b-button v-b-modal.add-modal style="padding: 0.1rem 0.1rem">Add my plus one.</b-button>
+            </div>
+            <div>
+              Fill out the information using the cards below. Make sure each member of your party accepts or declines.
+              Once you are done hit "Submit".
+            </div>
+          </div>
+        </template>
+
+        <hr>
+
+        <b-form @submit.prevent="submitForm">
+          <b-card-group deck>
+            <b-card
+                v-for="(member, index) in partyDetails.groupList" :key="index"
+                class="mb-2"
+                :title="member"
+            >
+              <b-card-body>
+                <b-form-group
+                    :id="'member-detail-' + index"
+                    label="Dietary Restrictions"
+                    label-for="textarea"
+                    class="navy-text"
+                >
+                  <b-form-textarea
+                      :id="'textarea-member-' + index"
+                      rows="5"
+                      no-resize
+                  ></b-form-textarea>
+                </b-form-group>
+
+                <div class="buttons">
+                  <b-button @click.prevent="acceptDecline(member,'accept')" variant="outline-secondary"
+                            class="custom-button">
+                    Joyfully Accept!
+                  </b-button>
+                  <b-button @click.prevent="acceptDecline(member,'decline')" variant="outline-secondary"
+                            class="custom-button">Regretfully Decline.
+                  </b-button>
+                </div>
+              </b-card-body>
+
+              <b-card-footer v-if="findInTable(member)">
+                {{ findInTable(member) }}
+              </b-card-footer>
+            </b-card>
+          </b-card-group>
+
+          <b-form-group
+              id="input-group-3"
+              label="Email address:"
+              label-for="input-3"
+          >
+            <b-form-input
+                id="input-3"
+                v-model="attending.emailAddress"
+                type="email"
+                placeholder="Email address"
+            ></b-form-input>
+
+            <small style="color: white; font-style: italic">
+              Just in case we need to contact you in these uncertain times.
+            </small>
+          </b-form-group>
+
+          <hr>
+
+          <b-button type="submit" class="margin-bottom-15" :disabled="buttonDisabled">
+            <send-icon size="1.0x" style="margin-right: 5px" v-if="!buttonLoading"/>
+            <b-spinner small v-if="buttonLoading"></b-spinner>
+            <span v-if="buttonLoading" style="margin-left: 5px">Submitting...</span>
+            <span v-if="!buttonLoading">Submit.</span>
+          </b-button>
+        </b-form>
+
+        <cant-find-person-modal></cant-find-person-modal>
+        <add-plus-one-modal @plus-one-added="addPlusOne"></add-plus-one-modal>
+        <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
+        <b-alert v-model="showAlert" variant="danger" dismissible>
+          Something unexpected happened. Try again, or come back later.
+        </b-alert>
+      </b-jumbotron>
+
+      <template v-slot:overlay>
+        <div class="text-center">
+          <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+          <p id="cancel-label">Loading...</p>
         </div>
       </template>
-
-      <hr class="my-4">
-
-      <b-form @submit.prevent="submitForm">
-        <b-card-group deck>
-          <b-card
-              v-for="(member, index) in partyDetails.groupList" :key="index"
-              class="mb-2"
-              :title="member"
-          >
-            <b-card-body>
-              <b-form-group
-                  :id="'member-detail-' + index"
-                  label="Dietary Restrictions"
-                  label-for="textarea"
-                  class="navy-text"
-              >
-                <b-form-textarea
-                    :id="'textarea-member-' + index"
-                    placeholder="Enter Dietary Restrictions"
-                    rows="5"
-                    no-resize
-                ></b-form-textarea>
-              </b-form-group>
-
-              <div class="buttons">
-                <b-button @click.prevent="acceptDecline(member,'accept')" variant="outline-secondary"
-                          class="custom-button">
-                  Joyfully Accept!
-                </b-button>
-                <b-button @click.prevent="acceptDecline(member,'decline')" variant="outline-secondary"
-                          class="custom-button">Regretfully Decline.
-                </b-button>
-              </div>
-            </b-card-body>
-
-            <b-card-footer v-if="findInTable(member)">
-              {{ findInTable(member) }}
-            </b-card-footer>
-          </b-card>
-        </b-card-group>
-
-        <b-form-group
-            id="input-group-3"
-            label="Email address:"
-            label-for="input-3"
-        >
-          <b-form-input
-              id="input-3"
-              v-model="attending.emailAddress"
-              type="email"
-              placeholder="Email address"
-          ></b-form-input>
-
-          <small style="color: white; font-style: italic">
-            Just in case we need to contact you in these uncertain times.
-          </small>
-        </b-form-group>
-
-        <hr class="my-4">
-
-        <b-button type="submit" class="margin-bottom-15" :disabled="buttonDisabled">
-          <send-icon size="1.0x" style="margin-right: 5px" v-if="!buttonLoading"/>
-          <b-spinner small v-if="buttonLoading"></b-spinner>
-          <span v-if="buttonLoading" style="margin-left: 5px">Submitting...</span>
-          <span v-if="!buttonLoading">Submit.</span>
-        </b-button>
-      </b-form>
-
-      <cant-find-person-modal></cant-find-person-modal>
-      <add-plus-one-modal @plus-one-added="addPlusOne"></add-plus-one-modal>
-      <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
-      <b-alert v-model="showAlert" variant="danger" dismissible>
-        Something unexpected happened. Try again, or come back later.
-      </b-alert>
-    </b-jumbotron>
-
-    <template v-slot:overlay>
-      <div class="text-center">
-        <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
-        <p id="cancel-label">Loading...</p>
-      </div>
-    </template>
-  </b-overlay>
+    </b-overlay>
+  </div>
 </template>
 
 <script>
@@ -211,12 +214,6 @@ export default {
 
           canSubmit = true;
         } else {
-          this.makeToast(
-              'danger',
-              "All party members must accept or decline the invitation.",
-              "More Information Required."
-          );
-
           canSubmit = false;
         }
       }
@@ -231,7 +228,15 @@ export default {
         }
 
         await this.submitReservation(submitObject);
-        console.log(JSON.stringify(submitObject));
+      } else {
+        this.makeToast(
+            'danger',
+            "All party members must accept or decline the invitation.",
+            "More Information Required."
+        );
+
+        this.buttonLoading = false;
+        this.buttonDisabled = false;
       }
     },
     async changeReservation() {
@@ -290,6 +295,7 @@ export default {
       this.$bvToast.toast(message, {
         title: title,
         variant: variant,
+        toaster: "b-toaster-top-center",
         solid: true
       })
     },
@@ -302,13 +308,50 @@ export default {
 </script>
 
 <style scoped>
+.display-3 {
+  font-size: 3.5rem;
+}
+
+.jumbotron-override {
+  padding: 1rem 1rem !important;
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+}
+
 @media (max-width: 768px) {
   .display-3 {
-    font-size: 3.0em;
+    font-size: 2.0em;
   }
 
   .card-body {
     padding: 2px 2px 2px 2px;
+    flex-direction: column;
+  }
+
+  .lead {
+    font-size: .90em;
+  }
+
+  .jumbotron-override {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+  }
+}
+
+@media(max-width: 1300px) {
+  .card-body {
+    padding: 2px 2px 2px 2px;
+  }
+
+  .jumbotron-override {
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+  }
+}
+
+@media(max-width: 768px) {
+  .card-deck {
+    flex-flow: column wrap;
   }
 }
 
@@ -316,5 +359,10 @@ export default {
   text-align: center !important;
   background-color: gainsboro !important;
   border: 1px solid gainsboro !important;
+}
+
+.flex-lead {
+  display: flex;
+  flex-direction: column;
 }
 </style>
