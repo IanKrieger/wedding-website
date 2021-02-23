@@ -52,3 +52,36 @@ export const onDeleteAttending = /* GraphQL */ `
     }
   }
 `;
+export const onCreateContactDetails = /* GraphQL */ `
+  subscription OnCreateContactDetails {
+    onCreateContactDetails {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateContactDetails = /* GraphQL */ `
+  subscription OnUpdateContactDetails {
+    onUpdateContactDetails {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteContactDetails = /* GraphQL */ `
+  subscription OnDeleteContactDetails {
+    onDeleteContactDetails {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;

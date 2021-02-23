@@ -53,6 +53,7 @@
     <b-alert v-model="showAlert" variant="danger" dismissible>
       Something unexpected happened. Try again, or come back later.
     </b-alert>
+    <postponed-modal></postponed-modal>
   </b-jumbotron>
 </template>
 
@@ -66,12 +67,16 @@ import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
 import Amplify from 'aws-amplify';
 
 import awsmobile from "@/aws-exports";
+import PostponedModal from "@/modals/PostponedModal";
 
 Amplify.configure(awsmobile);
 
 export default {
   name: "FindByPerson",
-  components: {AlreadyAttendingModal, CantFindPersonModal},
+  components: {PostponedModal, AlreadyAttendingModal, CantFindPersonModal},
+  mounted() {
+    this.$bvModal.show("modal-postponed");
+  },
   data: () => ({
     searchDetails: {
       firstName: "",

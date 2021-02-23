@@ -12,6 +12,8 @@
       </ul>
 
       <b-button class="mt-3" block @click="$bvModal.hide('modal-center')">Close</b-button>
+
+      <cant-find-person-modal></cant-find-person-modal>
     </b-modal>
   </div>
 </template>

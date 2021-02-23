@@ -61,3 +61,45 @@ export const deleteAttending = /* GraphQL */ `
     }
   }
 `;
+export const createContactDetails = /* GraphQL */ `
+  mutation CreateContactDetails(
+    $input: CreateContactDetailsInput!
+    $condition: ModelContactDetailsConditionInput
+  ) {
+    createContactDetails(input: $input, condition: $condition) {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateContactDetails = /* GraphQL */ `
+  mutation UpdateContactDetails(
+    $input: UpdateContactDetailsInput!
+    $condition: ModelContactDetailsConditionInput
+  ) {
+    updateContactDetails(input: $input, condition: $condition) {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteContactDetails = /* GraphQL */ `
+  mutation DeleteContactDetails(
+    $input: DeleteContactDetailsInput!
+    $condition: ModelContactDetailsConditionInput
+  ) {
+    deleteContactDetails(input: $input, condition: $condition) {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;
