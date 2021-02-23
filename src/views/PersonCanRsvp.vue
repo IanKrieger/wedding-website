@@ -1,77 +1,105 @@
 <template>
-  <b-jumbotron>
-    <template v-slot:header>{{ welcomeMessage }}</template>
+  <div>
+    <b-overlay :show="showOverlay" rounded="sm">
+      <b-jumbotron class="jumbotron-override">
+        <template v-slot:header>{{ welcomeMessage }}</template>
 
-    <template v-if="partyDetails.hasPlusOne" v-slot:lead>
-      You are allowed to bring a guest, let us know who you are bringing.
-      <b-button v-b-modal.add-modal>Add my plus one.</b-button>
-    </template>
-
-    <hr class="my-4">
-
-    <b-form @submit.prevent="submitForm">
-      <b-card-group deck>
-        <b-card
-            v-for="(member, index) in partyDetails.groupList" :key="index"
-            class="mb-2"
-            :title="member"
-        >
-          <b-card-body>
-            <b-form-group
-                :id="'member-detail-' + index"
-                label="Dietary Restrictions"
-                label-for="textarea"
-                class="navy-text"
-            >
-              <b-form-textarea
-                  :id="'textarea-member-' + index"
-                  placeholder="Enter Dietary Restrictions"
-                  rows="5"
-                  no-resize
-              ></b-form-textarea>
-            </b-form-group>
-
-            <div class="buttons">
-              <b-button @click.prevent="acceptDecline(member,'accept')" variant="outline-secondary"
-                        class="custom-button">Joyfully Accept!
-              </b-button>
-              <b-button @click.prevent="acceptDecline(member,'decline')" variant="outline-secondary"
-                        class="custom-button">Regretfully Decline.
-              </b-button>
+        <template v-slot:lead>
+          <div>
+            <div v-if="partyDetails.hasPlusOne" class="flex-lead">
+              You are allowed to bring a guest, let us know who you are bringing.
+              <b-button v-b-modal.add-modal style="padding: 0.1rem 0.1rem">Add my plus one.</b-button>
             </div>
-          </b-card-body>
+            <div>
+              Fill out the information using the cards below. Make sure each member of your party accepts or declines.
+              Once you are done hit "Submit".
+            </div>
+          </div>
+        </template>
 
-          <b-card-footer v-if="findInTable(member)">
-            {{ findInTable(member) }}
-          </b-card-footer>
-        </b-card>
-      </b-card-group>
+        <hr>
 
-      <b-form-group
-          id="input-group-3"
-          label="Email address (not required, but just in case):"
-          label-for="input-3"
-      >
-        <b-form-input
-            id="input-3"
-            v-model="attending.emailAddress"
-            type="email"
-            placeholder="Email address"
-        ></b-form-input>
-      </b-form-group>
+        <b-form @submit.prevent="submitForm">
+          <b-card-group deck>
+            <b-card
+                v-for="(member, index) in partyDetails.groupList" :key="index"
+                class="mb-2"
+                :title="member"
+            >
+              <b-card-body>
+                <b-form-group
+                    :id="'member-detail-' + index"
+                    label="Dietary Restrictions"
+                    label-for="textarea"
+                    class="navy-text"
+                >
+                  <b-form-textarea
+                      :id="'textarea-member-' + index"
+                      rows="5"
+                      no-resize
+                  ></b-form-textarea>
+                </b-form-group>
 
-      <hr class="my-4">
+                <div class="buttons">
+                  <b-button @click.prevent="acceptDecline(member,'accept')" variant="outline-secondary"
+                            class="custom-button">
+                    Joyfully Accept!
+                  </b-button>
+                  <b-button @click.prevent="acceptDecline(member,'decline')" variant="outline-secondary"
+                            class="custom-button">Regretfully Decline.
+                  </b-button>
+                </div>
+              </b-card-body>
 
-      <b-button type="submit" class="margin-bottom-15">Submit.</b-button>
-    </b-form>
+              <b-card-footer v-if="findInTable(member)">
+                {{ findInTable(member) }}
+              </b-card-footer>
+            </b-card>
+          </b-card-group>
 
-    <cant-find-person-modal></cant-find-person-modal>
-    <add-plus-one-modal @plus-one-added="addPlusOne"></add-plus-one-modal>
-    <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
-    <b-alert v-model="showAlert" variant="danger" dismissible>
-      Something unexpected happened. Try again, or come back later.
-    </b-alert>
-  </b-jumbotron>
+          <b-form-group
+              id="input-group-3"
+              label="Email address:"
+              label-for="input-3"
+          >
+            <b-form-input
+                id="input-3"
+                v-model="attending.emailAddress"
+                type="email"
+                placeholder="Email address"
+            ></b-form-input>
+
+            <small style="color: white; font-style: italic">
+              Just in case we need to contact you in these uncertain times.
+            </small>
+          </b-form-group>
+
+          <hr>
+
+          <b-button type="submit" class="margin-bottom-15" :disabled="buttonDisabled">
+            <send-icon size="1.0x" style="margin-right: 5px" v-if="!buttonLoading"/>
+            <b-spinner small v-if="buttonLoading"></b-spinner>
+            <span v-if="buttonLoading" style="margin-left: 5px">Submitting...</span>
+            <span v-if="!buttonLoading">Submit.</span>
+          </b-button>
+        </b-form>
+
+        <cant-find-person-modal></cant-find-person-modal>
+        <add-plus-one-modal @plus-one-added="addPlusOne"></add-plus-one-modal>
+        <already-attending-modal @change-reservation="changeReservation"></already-attending-modal>
+        <b-alert v-model="showAlert" variant="danger" dismissible>
+          Something unexpected happened. Try again, or come back later.
+        </b-alert>
+      </b-jumbotron>
+
+      <template v-slot:overlay>
+        <div class="text-center">
+          <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+          <p id="cancel-label">Loading...</p>
+        </div>
+      </template>
+    </b-overlay>
+  </div>
 </template>
 
 <script>
@@ -84,12 +112,13 @@ import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
 import Amplify from 'aws-amplify';
 import obj from "@/constants/const";
 import awsmobile from "@/aws-exports";
+import { SendIcon } from "vue-feather-icons";
 
 Amplify.configure(awsmobile);
 
 export default {
   name: "PersonCanRsvp",
-  components: {AlreadyAttendingModal, AddPlusOneModal, CantFindPersonModal},
+  components: {AlreadyAttendingModal, AddPlusOneModal, CantFindPersonModal, SendIcon},
   async mounted() {
     let id = this.$route.params.id;
 
@@ -99,11 +128,11 @@ export default {
       console.log(resp);
       this.attending = resp.data.getAttending;
       this.partyDetails = obj.find(item => item.id + "" === id);
-      console.log(JSON.stringify(this.partyDetails));
+      this.showOverlay = false;
     }).catch(e => {
       console.log(e);
       this.showAlert = true;
-    })
+    });
   },
   data: () => ({
     tableDetails: {
@@ -122,7 +151,10 @@ export default {
       hasPlusOne: false,
       groupList: []
     },
-    showAlert: false
+    showAlert: false,
+    showOverlay: true,
+    buttonDisabled: false,
+    buttonLoading: false
   }),
   computed: {
     welcomeMessage() {
@@ -162,6 +194,8 @@ export default {
     },
     async submitForm() {
       let groupDetails = this.partyDetails.groupList;
+      this.buttonDisabled = true;
+      this.buttonLoading = true;
 
       let personDetails = [];
 
@@ -180,12 +214,6 @@ export default {
 
           canSubmit = true;
         } else {
-          this.makeToast(
-              'danger',
-              "All party members must accept or decline the invitation.",
-              "More Information Required."
-          );
-
           canSubmit = false;
         }
       }
@@ -200,7 +228,15 @@ export default {
         }
 
         await this.submitReservation(submitObject);
-        console.log(JSON.stringify(submitObject));
+      } else {
+        this.makeToast(
+            'danger',
+            "All party members must accept or decline the invitation.",
+            "More Information Required."
+        );
+
+        this.buttonLoading = false;
+        this.buttonDisabled = false;
       }
     },
     async changeReservation() {
@@ -216,49 +252,54 @@ export default {
           })
       ).then(resp => {
         console.log(resp);
-        this.$router.replace({ name: "FindPerson" });
+        this.$router.replace({name: "FindPerson"});
       }).catch(e => {
         console.log(e);
         this.showAlert = true;
       });
     },
     async submitReservation(submitObject) {
-        let data = null
-        await API.graphql(graphqlOperation(
-            getAttending, {id: `${submitObject.id}`}
-        )).then(resp => {
-          data = resp.data.getAttending;
+      let data = null
+      await API.graphql(graphqlOperation(
+          getAttending, {id: `${submitObject.id}`}
+      )).then(resp => {
+        data = resp.data.getAttending;
 
+      }).catch(e => {
+        console.log(e);
+        this.showAlert = true;
+      });
+
+      if (data && !data.isAttending) {
+        await API.graphql(graphqlOperation(
+            updateAttending,
+            {
+              input: submitObject
+            })
+        ).then(resp => {
+          console.log(JSON.stringify(resp));
+          this.$router.push({name: "Success"});
         }).catch(e => {
           console.log(e);
           this.showAlert = true;
+          this.buttonDisabled = false;
+          this.buttonLoading = false;
         });
-
-        if (data && !data.isAttending) {
-          await API.graphql(graphqlOperation(
-              updateAttending,
-              {
-                input: submitObject
-              })
-          ).then(resp => {
-            console.log(JSON.stringify(resp));
-            this.$router.push({ name: "Success"})
-          }).catch(e => {
-            console.log(e);
-            this.showAlert = true;
-          });
-        } else {
-          this.$bvModal.show("modal-attending");
-        }
+      } else {
+        this.$bvModal.show("modal-attending");
+        this.buttonDisabled = true;
+        this.buttonLoading = false;
+      }
     },
     makeToast(variant = null, message, title) {
       this.$bvToast.toast(message, {
         title: title,
         variant: variant,
+        toaster: "b-toaster-top-center",
         solid: true
       })
     },
-    addPlusOne(name)  {
+    addPlusOne(name) {
       this.partyDetails.groupList.push(name);
       this.partyDetails.hasPlusOne = false;
     }
@@ -267,5 +308,61 @@ export default {
 </script>
 
 <style scoped>
+.display-3 {
+  font-size: 3.5rem;
+}
 
+.jumbotron-override {
+  padding: 1rem 1rem !important;
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+}
+
+@media (max-width: 768px) {
+  .display-3 {
+    font-size: 2.0em;
+  }
+
+  .card-body {
+    padding: 2px 2px 2px 2px;
+    flex-direction: column;
+  }
+
+  .lead {
+    font-size: .90em;
+  }
+
+  .jumbotron-override {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+  }
+}
+
+@media(max-width: 1300px) {
+  .card-body {
+    padding: 2px 2px 2px 2px;
+  }
+
+  .jumbotron-override {
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+  }
+}
+
+@media(max-width: 768px) {
+  .card-deck {
+    flex-flow: column wrap;
+  }
+}
+
+.card-footer {
+  text-align: center !important;
+  background-color: gainsboro !important;
+  border: 1px solid gainsboro !important;
+}
+
+.flex-lead {
+  display: flex;
+  flex-direction: column;
+}
 </style>

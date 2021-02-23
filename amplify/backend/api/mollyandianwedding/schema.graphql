@@ -11,3 +11,9 @@ type PersonDetails {
   dietaryRestrictions: String,
   status: String
 }
+
+type ContactDetails @model {
+  id: ID!,
+  email: String!,
+  fullName: String!
+}

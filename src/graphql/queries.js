@@ -42,3 +42,32 @@ export const listAttendings = /* GraphQL */ `
     }
   }
 `;
+export const getContactDetails = /* GraphQL */ `
+  query GetContactDetails($id: ID!) {
+    getContactDetails(id: $id) {
+      id
+      email
+      fullName
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listContactDetailss = /* GraphQL */ `
+  query ListContactDetailss(
+    $filter: ModelContactDetailsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listContactDetailss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        email
+        fullName
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

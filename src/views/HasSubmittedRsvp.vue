@@ -1,17 +1,27 @@
 <template>
   <div>
     <b-jumbotron class="no-background">
-      <h3 style="color: black; text-align: center; margin-bottom: 10px">
-        <strong>{{ attendingResult.length }} / {{ inviteeLength }}</strong> have RSVP'd <br/>
-        <strong>{{ accepted }}</strong> have accepted.
-        <br/>
-        <strong>{{ declined }}</strong> have declined.
-      </h3>
-      <div v-if="tableItems.length > 0">
-        <b-table striped hover :items="tableItems" outlined></b-table>
+      <b-button @click.prevent="switchViews = !switchViews" style="margin-bottom: 5px">
+        Switch to see {{ switchViews ? 'Responses Needed.' : 'People Attending.' }}
+      </b-button>
+      <div v-if="switchViews">
+        <h3 style="color: black; text-align: center; margin-bottom: 10px">
+          <strong>{{ attendingResult.length }} / {{ inviteeLength }}</strong> have RSVP'd <br/>
+          <strong>{{ accepted }}</strong> have accepted.
+          <br/>
+          <strong>{{ declined }}</strong> have declined.
+        </h3>
+        <div v-if="tableItems.length > 0">
+          <b-table striped :items="tableItems" :fields="sortAttendingFields" outlined></b-table>
+        </div>
+        <div v-else>
+          <h1 style="text-align: center; size: 200px; color: black"> Nothing Here Yet. 🤷‍️</h1>
+        </div>
       </div>
       <div v-else>
-        <h1 style="text-align: center; size: 200px; color: black"> Nothing Here Yet. 🤷‍️</h1>
+        <div v-if="noResponse.length > 0">
+          <b-table striped :items="noResponse" outlined></b-table>
+        </div>
       </div>
     </b-jumbotron>
     <b-alert v-model="showAlert" variant="danger" dismissible>
@@ -37,7 +47,6 @@ export default {
         .then(resp => {
           let data = resp.data.listAttendings.items;
           this.attendingResult = data.filter(person => person.isAttending);
-          console.log(JSON.stringify(data));
         }).catch(e => {
           console.log(e);
           this.showAlert = true;
@@ -46,7 +55,22 @@ export default {
   data: () => ({
     attendingResult: null,
     inviteeLength: obj.length,
-    showAlert: false
+    showAlert: false,
+    switchViews: true,
+    sortAttendingFields: [
+      {
+        key: 'name',
+        sortable: true
+      },
+      {
+        key: 'invitation_status',
+        sortable: true
+      },
+      {
+        key: "dietary_restrictions",
+        sortable: false
+      }
+    ],
   }),
   computed: {
     tableItems() {
@@ -63,6 +87,26 @@ export default {
         });
       }
       return tableItems;
+    },
+    noResponse() {
+      let newArr = [];
+      let copyArr = obj;
+      let idArr = this.attendingResult;
+      console.log(idArr);
+
+      idArr.forEach(id => {
+        let foundItem = copyArr.find(item => { return item.id + "" === id.id })
+        let indexBe = copyArr.indexOf(foundItem);
+        copyArr.splice(indexBe, 1);
+      });
+
+      copyArr.forEach(item => {
+        newArr.push({
+          group: item.groupList.join(", ")
+        })
+      });
+
+      return newArr;
     },
     accepted() {
       let accepted = 0;
@@ -97,5 +141,11 @@ export default {
   opacity: 1 !important;
   background-color: white !important;
   border: 1px solid black !important;
+}
+
+@media (max-width: 768px) {
+  .no-background {
+    margin: 5px 5px 5px 5px !important;
+  }
 }
 </style>

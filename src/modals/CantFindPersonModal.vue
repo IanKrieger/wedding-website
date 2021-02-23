@@ -3,13 +3,17 @@
     <b-link v-b-modal.modal-center class="link-override"> Click this if you are having trouble with the RSVP form.
     </b-link>
 
-    <b-modal id="modal-center" centered title="Contact Information">
+    <b-modal id="modal-center" centered title="Contact Information" hide-footer>
       <p> If you can't seem to find yourself on the RSVP list or someone from your party is missing, contact Ian & Molly
         and we will get you squared away.</p>
       <ul>
         <li>Email: <a href="mailto: iandkrieger@gmail.com">iandkrieger@gmail.com</a></li>
         <li>Phone: <a href="tel:440-867-3149">(440) 867-3149</a></li>
       </ul>
+
+      <b-button class="mt-3" block @click="$bvModal.hide('modal-center')">Close</b-button>
+
+      <cant-find-person-modal></cant-find-person-modal>
     </b-modal>
   </div>
 </template>

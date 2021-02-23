@@ -1,12 +1,17 @@
 <template>
-  <b-jumbotron>
-    <template v-slot:header>Welcome to Molly & Ian's RSVP website.</template>
+  <b-jumbotron class="flex-display">
+    <template v-slot:header class="mobile-display">RSVP for Molly & Ian's Wedding.</template>
 
     <template v-slot:lead>
-      If you are a family or a couple, only type in one name and we'll find everyone associated with your party.
+      <div>
+        Type in your first name and last name below. Once you are done press "Find Me!"
+      </div>
+      <div>
+        If you are a family or a couple, only type in one name and we'll find everyone associated with your party.
+      </div>
     </template>
 
-    <hr class="my-4">
+    <hr>
 
     <b-form @submit.prevent="searchStoreForPerson">
       <b-form-group
@@ -35,7 +40,12 @@
         </b-form-input>
       </b-form-group>
 
-      <b-button type="submit" pill class="margin-bottom-15">Find Me!</b-button>
+      <b-button type="submit" pill class="margin-bottom-15" :disabled="buttonDisabled">
+        <b-icon icon="search" style="margin-right: 5px" v-if="!buttonLoading"/>
+        <b-spinner small v-if="buttonLoading"></b-spinner>
+        <span v-if="buttonLoading" style="margin-left: 5px">Finding...</span>
+        <span v-if="!buttonLoading">Find Me!</span>
+      </b-button>
     </b-form>
 
     <cant-find-person-modal></cant-find-person-modal>
@@ -43,6 +53,7 @@
     <b-alert v-model="showAlert" variant="danger" dismissible>
       Something unexpected happened. Try again, or come back later.
     </b-alert>
+    <postponed-modal></postponed-modal>
   </b-jumbotron>
 </template>
 
@@ -56,12 +67,16 @@ import AlreadyAttendingModal from "@/modals/AlreadyAttendingModal";
 import Amplify from 'aws-amplify';
 
 import awsmobile from "@/aws-exports";
+import PostponedModal from "@/modals/PostponedModal";
 
 Amplify.configure(awsmobile);
 
 export default {
   name: "FindByPerson",
-  components: {AlreadyAttendingModal, CantFindPersonModal},
+  components: {PostponedModal, AlreadyAttendingModal, CantFindPersonModal},
+  mounted() {
+    this.$bvModal.show("modal-postponed");
+  },
   data: () => ({
     searchDetails: {
       firstName: "",
@@ -75,12 +90,16 @@ export default {
       displayName: "",
       personDetails: null
     },
-    showAlert: false
+    showAlert: false,
+    buttonDisabled: false,
+    buttonLoading: false
   }),
   methods: {
     async searchStoreForPerson() {
       let person = this.searchDetails.firstName.trim() + " " + this.searchDetails.lastName.trim();
       let invitee = obj.find(item => item.name.toLowerCase().includes(person.toLowerCase()))
+      this.buttonDisabled = true;
+      this.buttonLoading = true;
 
       let dbInvitee = null;
       if (invitee) {
@@ -95,6 +114,8 @@ export default {
             }).catch(e => {
               console.log(e);
               this.showAlert = true;
+              this.buttonDisabled = false;
+              this.buttonLoading = false;
             });
       } else {
         this.makeToast(
@@ -102,10 +123,14 @@ export default {
             `Unable to find a reservation for ${person}. Try a different variation of your name.`
             + '\n If that does not work, reach out to us using the contact info found below the "Find Me!" button.',
             `Unable to find ${person}.`
-        )
+        );
+        this.buttonDisabled = false;
+        this.buttonLoading = false;
       }
 
       if (dbInvitee && dbInvitee.isAttending && !this.overrideReservation) {
+        this.buttonLoading = false;
+        this.buttonDisabled = true;
         this.$bvModal.show('modal-attending');
       } else if (this.overrideReservation && dbInvitee) {
         await this.updateExistingInvitee(invitee);
@@ -134,6 +159,8 @@ export default {
       }).catch(e => {
         console.log(e);
         this.showAlert = true;
+        this.buttonDisabled = false;
+        this.buttonLoading = false;
       });
     },
     async createInvitee(invitee) {
@@ -151,6 +178,8 @@ export default {
         this.$router.push(`/submit/${invitee.id}`)
       }).catch(e => {
         this.showAlert = true;
+        this.buttonDisabled = false;
+        this.buttonLoading = false;
         console.log(e);
       });
     },
@@ -158,6 +187,7 @@ export default {
       this.$bvToast.toast(message, {
         title: title,
         variant: variant,
+        toaster: "b-toaster-top-center",
         solid: true
       })
     }
@@ -166,5 +196,24 @@ export default {
 </script>
 
 <style scoped>
+@media (max-width: 768px) {
+  .display-3 {
+    font-size: 3.0em;
+  }
 
+  .lead {
+    font-size: 1.0em;
+  }
+}
+
+@media (max-width: 1200px) {
+  .flex-display {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+  }
+}
+
+hr {
+  flex-grow: 1;
+}
 </style>
